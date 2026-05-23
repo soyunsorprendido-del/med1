@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscar Medico - Directorio de Medicos Libres</title>
+  <meta name="description" content="Encuentra medicos eticos en tu provincia. Contacta directamente, sin intermediarios. Medicina familiar, cardiologia, pediatria y mas especialidades.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .page-header {
+      background: var(--azul-marino);
+      color: var(--blanco);
+      padding: 7rem 0 3rem;
+      text-align: center;
+    }
+
+    .page-header h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      color: rgba(255,255,255,0.8);
+      font-size: 1.0625rem;
+    }
+
+    /* Buscador */
+    .buscador-container {
+      background: var(--blanco);
+      border-radius: var(--radio-xl);
+      box-shadow: var(--sombra-md);
+      padding: 1.5rem;
+      margin-top: -2rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .buscador-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 1rem;
+      align-items: end;
+    }
+
+    .buscador-grid .btn {
+      height: 50px;
+      white-space: nowrap;
+    }
+
+    /* Resultados */
+    .resultados-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .resultados-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .medico-card {
+      transition: var(--transicion);
+    }
+
+    /* Info banner */
+    .info-banner {
+      background: rgba(46,204,113,0.08);
+      border: 1px solid rgba(46,204,113,0.2);
+      border-radius: var(--radio-md);
+      padding: 1rem 1.25rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.9375rem;
+      color: var(--gris-700);
+    }
+
+    .info-banner svg {
+      color: var(--verde-etico);
+      flex-shrink: 0;
+    }
+
+    /* Donacion */
+    .donacion-box {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 2rem;
+      background: var(--gris-50);
+      border-radius: var(--radio-lg);
+    }
+
+    .donacion-box h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--azul-marino);
+      margin-bottom: 0.5rem;
+    }
+
+    .donacion-box p {
+      color: var(--gris-600);
+      font-size: 0.9375rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .buscador-grid {
+        grid-template-columns: 1fr;
+      }
+      .buscador-container {
+        margin-top: -1rem;
+      }
+      .resultados-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="preloader">
+    <div class="preloader-spinner"></div>
+    <p style="margin-top:1rem;color:var(--gris-600);font-size:0.875rem;">Cargando...</p>
+  </div>
+
+  <!-- Navegacion -->
+  <nav class="navbar">
+    <div class="container navbar-inner">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        Medicos Libres
+      </a>
+      <button class="menu-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+      <ul class="nav-links">
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="directorio-pacientes.html">Buscar medico</a></li>
+        <li><a href="registro-medico.html">Soy medico</a></li>
+        <li><a href="info-empresas.html">Para clinicas</a></li>
+        <li><a href="info-destacado.html">Destacarme</a></li>
+        <li><a href="donar.html" class="nav-cta">Donar</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="page-header">
+    <div class="container">
+      <h1>Encuentra tu medico</h1>
+      <p>Busca por especialidad, provincia o palabra clave. Contacta directamente.</p>
+    </div>
+  </header>
+
+  <!-- Buscador -->
+  <section style="padding-bottom: 0;">
+    <div class="container">
+      <div class="buscador-container fade-in">
+        <form id="busquedaForm" class="buscador-grid">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Especialidad</label>
+            <select name="especialidad" class="form-select" data-especialidades>
+              <option value="">Todas</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Provincia</label>
+            <select name="provincia" class="form-select" data-provincias>
+              <option value="">Todas</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Palabra clave</label>
+            <input type="text" name="palabraClave" class="form-input" placeholder="Nombre, ciudad, descripcion...">
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            Buscar
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Resultados -->
+  <section class="section">
+    <div class="container">
+      <div class="info-banner fade-in">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <span><strong>Contacta directamente con el medico.</strong> Esta web es un directorio profesional, no una intermediaria sanitaria. Verifica el numero de colegiado en el Colegio de Medicos correspondiente.</span>
+      </div>
+
+      <div class="resultados-header fade-in">
+        <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--azul-marino);" id="resultadosInfo">Cargando medicos...</h2>
+        <a href="registro-medico.html" class="btn btn-sm btn-primary">Registrarme como medico</a>
+      </div>
+
+      <div class="resultados-grid" id="resultadosContainer">
+        <!-- Se rellena via JavaScript -->
+      </div>
+
+      <!-- Donacion -->
+      <div class="donacion-box fade-in">
+        <h3>Ayudanos a mantener este directorio libre</h3>
+        <p>Medicos Libres es gratuito para medicos y pacientes. Tu donacion permite mantener la plataforma independiente.</p>
+        <a href="donar.html" class="btn btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          Hacer una donacion
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal Perfil Medico -->
+  <div class="modal-overlay" id="perfilModal">
+    <div class="modal-content" style="max-width: 550px;">
+      <button class="modal-close" onclick="UI.cerrarModal('perfilModal')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div id="perfilModalBody">
+        <!-- Contenido dinamico -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo">
+            <div class="logo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+            Medicos Libres
+          </a>
+          <p>Directorio profesional de medicos espanoles comprometidos con la etica, la autonomia y la libertad de ejercicio medico.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Plataforma</h4>
+          <ul>
+            <li><a href="directorio-pacientes.html">Buscar medico</a></li>
+            <li><a href="registro-medico.html">Registro medico</a></li>
+            <li><a href="info-destacado.html">Perfil destacado</a></li>
+            <li><a href="info-empresas.html">Para clinicas</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="legal.html">Aviso Legal</a></li>
+            <li><a href="legal.html#privacidad">Politica de Privacidad</a></li>
+            <li><a href="legal.html#cookies">Politica de Cookies</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Soporte</h4>
+          <ul>
+            <li><a href="donar.html">Donar al proyecto</a></li>
+            <li><a href="mailto:hola@medicoslibres.es">Contacto</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p> Medicos Libres 2026. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
